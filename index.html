@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chart</title>
+        <meta charset="utf-8"/>
+
+        <!-- Load c3.css -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.8/c3.css" rel="stylesheet">
+
+        <!-- Load d3.js and c3.js -->
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.8/c3.min.js"></script>
+
+        <style type="text/css">
+             html, body { margin: 0; padding: 0; height: 100%; }
+             #chart { min-height: 100%; }
+        </style>
+
+    </head>
+
+    <body>
+        <div id="chart"></div>
+
+        <script type="text/javascript">
+
+        d3.csv("data_csv2-1.csv")
+          .row(function(d) { return  [d.ca_x, d.ca, d.community];
+                          })
+          .get(function(error, rows) {
+            rows.unshift (["art", "price", ]) //The unshift() method adds one or more elements (the header of the data in this case) to the beginning of an array
+
+            var chart = c3.generate({
+                bindto: '#chart',
+                data: {
+                  rows: rows,
+                    
+                  xSort: false, // This will tell C3 not to sort the given data, so that you can access the additional data with the same index.
+                    
+                  xs: {
+                      'price' : 'art', //tell C3 the x and y data for the scatter plot
+                                    // in the form of y : x - the header names are placed in quotes
+                  },
+ 
+                  type: 'scatter',
+                },
+
+                axis: {
+                    x: {
+                        label: 'Public Arts',
+                        tick: {
+                            fit: false
+                        }
+                    },
+                    y: {
+                        label: 'Housing Price'
+                    }
+                },
+
+                tooltip: {
+                  contents: function (d, defaultTitleFormat, defaultValueFormat, color) { 
+                      console.log(d[0].index);
+                      return rows[d[0].index +1][2];  //use the community area names as the tooltips; I added 1 to the index value as there is no header added to the column (If I do, the scatter plot won't draw)
+
+                  }
+                }
+            });
+        });
+
+        </script>
+   </body>
+</html>
